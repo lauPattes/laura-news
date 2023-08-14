@@ -2,14 +2,9 @@ const app = require("../server/app");
 const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
-const {
-  topicData,
-  userData,
-  articleData,
-  commentData,
-} = require("../db/data/test-data/index");
+const testData = require("../db/data/test-data/index");
 
-beforeEach(() => seed({ topicData, userData, articleData, commentData }));
+beforeEach(() => seed(testData));
 
 afterAll(() => {
   db.end();
@@ -21,18 +16,17 @@ describe("/api/topics", () => {
       .get("/api/topics")
       .expect(200)
       .then((response) => {
-        const arr = response.body;
-        expect(response.body).toEqual(expect.any(Array));
+        const arr = response.body.topics;
+        expect(arr).toHaveLength(3);
         arr.forEach((obj) => {
+        expect(obj).toEqual(expect.objectContaining("slug", "description"))
           expect(Object.keys(obj)).toEqual(
-            expect.arrayContaining(["slug", "description"]) 
+            expect.arrayContaining(["slug", "description"])
           );
         });
       });
-  })
-  test("Get 404 sends an appropriate error message when given an incorrect path",()=>{
-    return request(app)
-    .get("/api/topics/23")
-    .expect(404)
-  })
+  });
+  test("Get 404 sends an appropriate error message when given an incorrect path", () => {
+    return request(app).get("/api/topics/23").expect(404);
+  });
 });
