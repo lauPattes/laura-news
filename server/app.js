@@ -1,4 +1,4 @@
-const { getTopics,getEndpoints } = require("./controller");
+const { getTopics,getEndpoints,getArticleId } = require("./controller");
 
 const express = require("express");
 const app = express();
@@ -7,6 +7,7 @@ app.get("/api/topics", getTopics);
 
 app.get("/api",getEndpoints)
 
+app.get("/api/articles/:article_id",getArticleId)
 
 
 app.use((err, req, res, next) => {
@@ -27,3 +28,4 @@ app.all("/*",(req,res)=>{
 })
 
 module.exports = app;
+

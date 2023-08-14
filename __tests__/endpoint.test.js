@@ -3,8 +3,8 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
-const endpoints = require("../endpoints.json")
-const fs = require("fs/promises")
+const endpoints = require("../endpoints.json");
+const fs = require("fs/promises");
 
 beforeEach(() => seed(testData));
 
@@ -21,29 +21,55 @@ describe("/api/topics", () => {
         const arr = response.body.topics;
         expect(arr).toHaveLength(3);
         arr.forEach((obj) => {
-          expect(Object.keys(obj)).toEqual(
-            expect.arrayContaining(["slug", "description"])
-          );
+          expect(obj).toHaveProperty("slug");
+          expect(obj).toHaveProperty("description");
         });
       });
   });
   test("Get 404 sends an appropriate error message when given an incorrect path", () => {
-    return request(app).get("/api/topicZ").expect(404).then((response)=>{
-        console.log(response.body.msg)
-        expect(response.body.msg).toEqual("path not found")
-    });
+    return request(app)
+      .get("/api/topicZ")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toEqual("path not found");
+      });
   });
 });
 
-describe("/api",()=>{
-    test("Get 200 sends object to the client describing all the endpoints available",()=>{
-        return request(app).get("/api")
-        .expect(200)
-        .then((response)=>{
-            const gotFile = response.body.endpoints
-            return fs.readFile("endpoints.json","utf8").then((readFile)=>{
-                expect(gotFile).toEqual(JSON.parse(readFile))
-            })
-        })
-    })
-})
+describe("/api", () => {
+  test("Get 200 sends object to the client describing all the endpoints available", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((response) => {
+        const gotFile = response.body.endpoints;
+        return fs.readFile("endpoints.json", "utf8").then((readFile) => {
+          expect(gotFile).toEqual(JSON.parse(readFile));
+        });
+      });
+  });
+});
+
+describe("/api/articles/:article_id", () => {
+  test("Get sends an article object to the client with all the correct properties", () => {
+    return request(app)
+      .get("/api/articles/3")
+      .expect(200)
+      .then((response) => {
+        const article = response.body.article
+        console.log(article)
+        const keysArr = Object.keys(article);
+        console.log(keysArr)
+        expect(keysArr).toEqual(['article_id',
+        'title',
+        'topic',
+        'author',
+        'body',
+        'created_at',
+        'votes',
+        'article_img_url']);
+      });
+  });
+});
+
+//all tests above passing, need to create an error handling for "/api/articles/:article_id"
