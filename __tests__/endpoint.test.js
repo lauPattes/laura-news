@@ -19,7 +19,6 @@ describe("/api/topics", () => {
         const arr = response.body.topics;
         expect(arr).toHaveLength(3);
         arr.forEach((obj) => {
-        expect(obj).toEqual(expect.objectContaining("slug", "description"))
           expect(Object.keys(obj)).toEqual(
             expect.arrayContaining(["slug", "description"])
           );
