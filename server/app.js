@@ -1,13 +1,17 @@
-const { getTopics } = require("./controller");
+const { getTopics,getEndpoints } = require("./controller");
 
 const express = require("express");
 const app = express();
 
 app.get("/api/topics", getTopics);
 
+app.get("/api",getEndpoints)
+
+
+
 app.use((err, req, res, next) => {
-  if (err.code === "404") {
-    res.status(404).send({ msg: "path not found" });
+  if (err.code) {
+    res.status(err.status).send({msg: err.msg});
   }
   else{
     next(err)
@@ -18,5 +22,8 @@ app.use((err, req, res, next) => {
   res.status(500).send("Server Error!");
 });
 
+app.all("/*",(req,res)=>{
+    res.status(404).send({msg :"path not found"})
+})
 
 module.exports = app;
