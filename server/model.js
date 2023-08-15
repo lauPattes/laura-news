@@ -22,8 +22,8 @@ exports.selectArticleById = (article_id)=>{
         const article = result.rows[0]
         if(!article){
             return Promise.reject({
-                status : "404",
-                msg: `article does not exist`
+                status : 404,
+                msg: "article does not exist"
             })
         }
         else{

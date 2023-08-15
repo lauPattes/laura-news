@@ -158,3 +158,15 @@ describe("/api/articles", () => {
   });
 });
 
+describe("/api/articles", () => {
+  test("Get 404, should return a 404 error to the client when trying to query by with column not in our database", () => {
+    return request(app)
+      .get("/api/articles?bananna=2")
+      .expect(404)
+      .then((response) => {
+        const { body } = response;
+        expect(body.msg).toBe("path not found")
+      });
+  });
+});
+
