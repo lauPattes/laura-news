@@ -76,7 +76,7 @@ describe("/api/articles/:article_id", () => {
       expect(response.body.msg).toBe('article does not exist')
     })
   })
-  test.only("GET: 400 sends an appropriate error message when given an invalid id",()=>{
+  test("GET: 400 sends an appropriate error message when given an invalid id",()=>{
     return request(app)
     .get("/api/articles/not-an-id")
     .expect(400)
