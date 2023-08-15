@@ -31,3 +31,10 @@ exports.selectArticleById = (article_id)=>{
         }
     })
 }
+
+exports.selectArticles = () =>{
+    return db.query('SELECT * FROM articles')
+    .then((result)=>{
+        return result.rows
+    })
+}

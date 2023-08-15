@@ -88,3 +88,29 @@ describe("/api/articles/:article_id", () => {
   })
 });
 
+describe("/api/articles",()=>{
+  test("Get 200 sends an array of article objects to the client, each of which contains all the required properties",()=>{
+    return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then((response)=>{
+      const {body} = response
+      const {articles} = body
+      expect(articles).toHaveLength(13)
+      articles.forEach((articleObj)=>{
+        expect(articleObj).toEqual(expect.objectContaining({
+          article_id: expect.anything(),
+          title: expect.anything(),
+          topic: expect.anything(),
+          author: expect.anything(),
+          created_at: expect.anything(),
+          votes: expect.anything(),
+          article_img_url: expect.anything(),
+          comment_count : expect.anything()
+        }))
+      })
+    })
+  })
+})
+
+//need to add comment count

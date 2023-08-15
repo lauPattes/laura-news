@@ -1,4 +1,4 @@
-const { getTopics, getEndpoints, getArticleId } = require("./controller");
+const { getTopics, getEndpoints, getArticleId, getArticles } = require("./controller");
 
 const express = require("express");
 const app = express();
@@ -8,6 +8,8 @@ app.get("/api/topics", getTopics);
 app.get("/api", getEndpoints);
 
 app.get("/api/articles/:article_id", getArticleId);
+
+app.get("/api/articles",getArticles)
 
 app.use((err, req, res, next) => {
     if (err.msg === "article does not exist") {
