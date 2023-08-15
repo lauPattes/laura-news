@@ -57,9 +57,7 @@ describe("/api/articles/:article_id", () => {
       .expect(200)
       .then((response) => {
         const article = response.body.article
-        console.log(article)
         const keysArr = Object.keys(article);
-        console.log(keysArr)
         expect(keysArr).toEqual(['article_id',
         'title',
         'topic',
@@ -70,6 +68,20 @@ describe("/api/articles/:article_id", () => {
         'article_img_url']);
       });
   });
+  test("GET: 404 sends an appropriate and error message when given a valid but non-existent id",()=>{
+    return request(app)
+    .get("/api/articles/999")
+    .expect(404)
+    .then((response)=>{
+      expect(response.body.msg).toBe('article does not exist')
+    })
+  })
+  test.only("GET: 400 sends an appropriate error message when given an invalid id",()=>{
+    return request(app)
+    .get("/api/articles/not-an-id")
+    .expect(400)
+    .then((response)=>{
+      expect(response.body.msg).toBe("invalid id")
+    })
+  })
 });
-
-//all tests above passing, need to create an error handling for "/api/articles/:article_id"
