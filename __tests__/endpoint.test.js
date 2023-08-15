@@ -51,21 +51,23 @@ describe("/api", () => {
 });
 
 describe("/api/articles/:article_id", () => {
-  test("Get sends an article object to the client with all the correct properties", () => {
+  test.only("Get sends an article object to the client with all the correct properties", () => {
     return request(app)
       .get("/api/articles/3")
       .expect(200)
       .then((response) => {
         const article = response.body.article
-        const keysArr = Object.keys(article);
-        expect(keysArr).toEqual(['article_id',
-        'title',
-        'topic',
-        'author',
-        'body',
-        'created_at',
-        'votes',
-        'article_img_url']);
+        expect(article.article_id).toBe(3)
+        expect(article).toEqual(expect.objectContaining({
+          article_id: 3,
+          title: 'Eight pug gifs that remind me of mitch',
+          topic: 'mitch',
+          author: 'icellusedkars',
+          body: 'some gifs',
+          created_at: '2020-11-03T09:12:00.000Z',
+          votes: 0,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+        }))
       });
   });
   test("GET: 404 sends an appropriate and error message when given a valid but non-existent id",()=>{
