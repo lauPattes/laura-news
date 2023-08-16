@@ -1,4 +1,4 @@
-const { getTopics, getEndpoints, getArticleId, getArticles, getCommentsByArticleId } = require("./controller");
+const { getTopics, getEndpoints, getArticleId, getArticles, getCommentsByArticleId, patchVotes } = require("./controller");
 
 const express = require("express");
 const app = express();
@@ -10,7 +10,12 @@ app.get("/api", getEndpoints);
 app.get("/api/articles/:article_id", getArticleId);
 
 app.get("/api/articles/:article_id/comments",getCommentsByArticleId)
+
 app.get("/api/articles",getArticles)
+
+app.use(express.json())
+
+app.patch("/api/articles/:article_id",patchVotes)
 
 app.use((err, req, res, next) => {
     if (err.status === 404) {
@@ -44,5 +49,6 @@ app.use((err, req, res, next) => {
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "path not found" });
 });
+
 
 module.exports = app;

@@ -247,3 +247,62 @@ describe("/api/articles/:article_id/comments", () => {
   })
 })
 
+describe("/api/articles/:article_id",()=>{
+  test("PATCH 201 responds with updated article",()=>{
+    const toUpdate = {inc_votes: 5}
+    return request(app)
+    .patch("/api/articles/1")
+    .send(toUpdate)
+    .expect(201)
+    .then(({body})=>{
+      expect(body.updatedArticle).toEqual({
+          article_id: 1,
+          title: 'Living in the shadow of a great man',
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'I find this existence challenging',
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 105,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+      })
+    })
+  })
+  test("PATCH 201 responds with updated article",()=>{
+    const toUpdate = {inc_votes: -50}
+    return request(app)
+    .patch("/api/articles/1")
+    .send(toUpdate)
+    .expect(201)
+    .then(({body})=>{
+      expect(body.updatedArticle).toEqual({
+          article_id: 1,
+          title: 'Living in the shadow of a great man',
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'I find this existence challenging',
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 50,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+      })
+    })
+  })
+  test("PATCH 201 responds with updated article",()=>{
+    const toUpdate = {inc_votes: -110}
+    return request(app)
+    .patch("/api/articles/1")
+    .send(toUpdate)
+    .expect(201)
+    .then(({body})=>{
+      expect(body.updatedArticle).toEqual({
+          article_id: 1,
+          title: 'Living in the shadow of a great man',
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'I find this existence challenging',
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: -10,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+      })
+    })
+  })
+})
