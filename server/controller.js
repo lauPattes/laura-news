@@ -1,4 +1,4 @@
-const { selectTopics, selectEndpoints, selectArticleById } = require("./model");
+const { selectTopics, selectEndpoints, selectArticleById, selectArticles, commentCount } = require("./model");
 
 exports.getTopics = (req, res) => {
   selectTopics()
@@ -30,3 +30,13 @@ exports.getArticleId = (req, res, next) => {
     next(err)
   })
 };
+
+exports.getArticles = (req,res,next) => {
+  selectArticles()
+  .then((articles)=>{
+    res.status(200).send({articles})
+  })
+  .catch((err)=>{
+    next(err)
+  })
+  }
