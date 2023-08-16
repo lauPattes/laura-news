@@ -95,21 +95,20 @@ describe("/api/articles", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
-      .then((response) => {
-        const { body } = response;
+      .then(({body}) => {
         const { articles } = body;
         expect(articles).toHaveLength(13);
         articles.forEach((articleObj) => {
           expect(articleObj).toEqual(
             expect.objectContaining({
-              article_id: expect.anything(),
-              title: expect.anything(),
-              topic: expect.anything(),
-              author: expect.anything(),
-              created_at: expect.anything(),
-              votes: expect.anything(),
-              article_img_url: expect.anything(),
-              comment_count: expect.anything(),
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+              comment_count: expect.any(Number),
             })
           );
         });
@@ -128,9 +127,6 @@ describe("/api/articles", () => {
       .then((response) => {
         const { body } = response;
         const { articles } = body;
-        articles.forEach((articleObj) => {
-          expect(articleObj).toHaveProperty("comment_count");
-        })
         expect(articles[0]).toEqual({
           article_id: 3,
           title: 'Eight pug gifs that remind me of mitch',
@@ -139,7 +135,7 @@ describe("/api/articles", () => {
           created_at: "2020-11-03T09:12:00.000Z",
           votes: 0,
           article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
-          comment_count: '2'
+          comment_count: 2
         })
       });
   });
@@ -158,15 +154,4 @@ describe("/api/articles", () => {
   });
 });
 
-describe("/api/articles", () => {
-  test("Get 404, should return a 404 error to the client when trying to query by with column not in our database", () => {
-    return request(app)
-      .get("/api/articles?bananna=2")
-      .expect(404)
-      .then((response) => {
-        const { body } = response;
-        expect(body.msg).toBe("path not found")
-      });
-  });
-});
 

@@ -32,11 +32,7 @@ exports.getArticleId = (req, res, next) => {
 };
 
 exports.getArticles = (req,res,next) => {
-  if(Object.keys(req.query).length > 0){
-    next({status : 404, msg : "path not found"})
-  }
-  else{
-    selectArticles()
+  selectArticles()
   .then((articles)=>{
     res.status(200).send({articles})
   })
@@ -44,4 +40,3 @@ exports.getArticles = (req,res,next) => {
     next(err)
   })
   }
-}
