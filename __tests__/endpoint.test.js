@@ -88,6 +88,22 @@ describe("/api/articles/:article_id", () => {
         expect(response.body.msg).toBe("invalid id");
       });
   });
+  test("GET: 404 sends an appropriate and error message when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article does not exist");
+      });
+  });
+  test("GET: 400 sends an appropriate error message when given an invalid id", () => {
+    return request(app)
+      .get("/api/articles/not-an-id")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("invalid id");
+      });
+  });
 });
 
 describe("/api/articles", () => {
@@ -139,9 +155,6 @@ describe("/api/articles", () => {
         })
       });
   });
-});
-
-describe("/api/articles", () => {
   test("Get 200, he articles should be sorted by date in descending order", () => {
     return request(app)
       .get("/api/articles")
@@ -151,7 +164,86 @@ describe("/api/articles", () => {
         const { articles } = body;
         expect(articles).toBeSortedBy("created_at",{descending : true})
       });
-  });
+  })
 });
 
+
+describe("/api/articles/:article_id/comments", () => {
+  test("Get: 200 sends an array of comment objects to the client for the specified id, each of which has the correct properties", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then((response) => {
+        const { body } = response;
+        const comments = body.comments;
+        expect(comments).toHaveLength(2);
+        comments.forEach((comment) => {
+          expect(comment.article_id).toBe(3);
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              article_id: 3,
+            })
+          );
+        });
+      });
+  });
+  test("Get: 200 sends an array of comment objects to the client for the specified id with the correct key value pairs", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then((response) => {
+        const { body } = response;
+        const comments = body.comments;
+        expect(comments[0]).toEqual({
+          comment_id: 15,
+          body: "I am 100% sure that we're not completely sure.",
+          article_id: 5,
+          author: "butter_bridge",
+          votes: 1,
+          created_at: "2020-11-24T00:08:00.000Z",
+        });
+      });
+  });
+  test("Get: 200 sends an array of comment objects to the client for the specified id ordered by most recent comments first", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then((response) => {
+        const { body } = response;
+        const comments = body.comments
+        expect(comments).toBeSortedBy("created_at",{descending : true})
+      });
+  });
+  test("Get:200 sends an empty array when there are no comments for the specified id",()=>{
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then((response) => {
+        const { body } = response;
+        const comments = body.comments
+        expect(comments).toHaveLength(0)
+      })
+  })
+  test("GET: 404 sends an appropriate and error message when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/999/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article does not exist");
+      });
+  })
+  test("GET: 404 sends an appropriate and error message when given an invalid id",()=>{
+    return request(app)
+    .get("/api/articles/not-an-id/comments")
+    .expect(400)
+    .then((response) => {
+      expect(response.body.msg).toBe("invalid id")
+    })
+  })
+})
 
