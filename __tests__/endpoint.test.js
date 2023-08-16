@@ -139,7 +139,26 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(200)
       .then((response) => {
         const { body } = response;
-        const comments = body.comments;
+        const comments = body.comments
+        expect(comments).toBeSortedBy("created_at",{descending : true})
       });
   });
+  test("Get:200 sends an empty array when there are no comments for the specified id",()=>{
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then((response) => {
+        const { body } = response;
+        const comments = body.comments
+        expect(comments).toHaveLength(0)
+      })
+  })
+  test("GET: 404 sends an appropriate and error message when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/999/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article does not exist");
+      });
+  })
 });
