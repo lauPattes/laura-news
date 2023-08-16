@@ -3,7 +3,8 @@ const {
   selectEndpoints,
   selectArticleById,
   selectCommentsByArticleId,
-  selectArticles
+  selectArticles,
+  insertComment
 } = require("./model");
 
 exports.getTopics = (req, res) => {
@@ -59,4 +60,17 @@ exports.getArticles = (req,res,next) => {
   .catch((err)=>{
     next(err)
   })
+  }
+
+  exports.postComment = (req,res,next) =>{
+    const {username, body} = req.body
+    const {article_id} = req.params
+    insertComment(username, body, article_id)
+    .then((comment)=>{
+      res.status(201).send({comment})
+    })
+    .catch((err)=>{
+      res.status(400).send({msg : err.code})
+    })
+
   }
