@@ -4,7 +4,7 @@ const {
   selectArticleById,
   selectCommentsByArticleId,
   selectArticles,
-  updateVotes
+  updateVotes,
 } = require("./model");
 
 exports.getTopics = (req, res) => {
@@ -62,12 +62,24 @@ exports.getArticles = (req, res, next) => {
     });
 };
 
-
-exports.patchVotes = (req, res, next) =>{
-  const {inc_votes} = req.body
-  const {article_id} = req.params
-  updateVotes(article_id,inc_votes)
-  .then((updatedArticle)=>{
-    res.status(201).send({updatedArticle})
-  })
-}
+exports.patchVotes = (req, res, next) => {
+  const { inc_votes } = req.body;
+  const { article_id } = req.params;
+  const type = typeof inc_votes
+  if (type !== "number") {
+    next({status: 400, msg: "incorrect body" });
+  } else {
+    selectArticleById(article_id).then((articles)=>{
+      return Promise.all([articles])
+    })
+    .then(()=>{
+      return updateVotes(article_id, inc_votes)
+    })
+    .then((updatedArticle) => {
+        res.status(201).send({ updatedArticle });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
+};
