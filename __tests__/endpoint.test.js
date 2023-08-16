@@ -3,14 +3,12 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
-const endpoints = require("../endpoints.json");
 const fs = require("fs/promises");
-const { log } = require("console");
 
 beforeEach(() => seed(testData));
 
 afterAll(() => {
-  db.end();
+  return db.end();
 });
 
 describe("/api/topics", () => {
@@ -90,7 +88,85 @@ describe("/api/articles/:article_id", () => {
         expect(response.body.msg).toBe("invalid id");
       });
   });
+  test("GET: 404 sends an appropriate and error message when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article does not exist");
+      });
+  });
+  test("GET: 400 sends an appropriate error message when given an invalid id", () => {
+    return request(app)
+      .get("/api/articles/not-an-id")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("invalid id");
+      });
+  });
 });
+
+describe("/api/articles", () => {
+  test("Get 200 sends an array of article objects to the client, each of which contains all the required properties", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({body}) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(13);
+        articles.forEach((articleObj) => {
+          expect(articleObj).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+              comment_count: expect.any(Number),
+            })
+          );
+        });
+      });
+  });
+});
+
+
+
+
+describe("/api/articles", () => {
+  test("Get 200, the array of objects sent to the client contains the correct comment_count value, and doesn't have a body value", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const { body } = response;
+        const { articles } = body;
+        expect(articles[0]).toEqual({
+          article_id: 3,
+          title: 'Eight pug gifs that remind me of mitch',
+          topic: 'mitch',
+          author: 'icellusedkars',
+          created_at: "2020-11-03T09:12:00.000Z",
+          votes: 0,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+          comment_count: 2
+        })
+      });
+  });
+  test("Get 200, he articles should be sorted by date in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const { body } = response;
+        const { articles } = body;
+        expect(articles).toBeSortedBy("created_at",{descending : true})
+      });
+  })
+});
+
 
 describe("/api/articles/:article_id/comments", () => {
   test("Get: 200 sends an array of comment objects to the client for the specified id, each of which has the correct properties", () => {
@@ -170,3 +246,4 @@ describe("/api/articles/:article_id/comments", () => {
     })
   })
 })
+

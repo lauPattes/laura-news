@@ -3,6 +3,7 @@ const {
   selectEndpoints,
   selectArticleById,
   selectCommentsByArticleId,
+  selectArticles
 } = require("./model");
 
 exports.getTopics = (req, res) => {
@@ -49,3 +50,13 @@ exports.getCommentsByArticleId = (req, res, next) => {
     next(err)
   });
   };
+
+exports.getArticles = (req,res,next) => {
+  selectArticles()
+  .then((articles)=>{
+    res.status(200).send({articles})
+  })
+  .catch((err)=>{
+    next(err)
+  })
+  }
