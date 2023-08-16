@@ -155,7 +155,7 @@ describe("/api/articles", () => {
         })
       });
   });
-  test("Get 200, he articles should be sorted by date in descending order", () => {
+  test("Get 200, the articles should be sorted by date in descending order", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
