@@ -7,7 +7,7 @@ const {
   insertComment
 } = require("./model");
 
-exports.getTopics = (req, res) => {
+exports.getTopics = (req, res, next) => {
   selectTopics()
     .then((topics) => {
       res.status(200).send({ topics });
@@ -65,12 +65,19 @@ exports.getArticles = (req,res,next) => {
   exports.postComment = (req,res,next) =>{
     const {username, body} = req.body
     const {article_id} = req.params
-    insertComment(username, body, article_id)
-    .then((comment)=>{
+    selectArticleById(article_id).then((response)=>{
+      return Promise.all([response])
+    })
+    .then(()=>{
+     const comment = insertComment(username, body, article_id)
+     return Promise.all([comment])
+    })
+    .then((commentArr)=>{
+      const comment = commentArr[0]
       res.status(201).send({comment})
     })
     .catch((err)=>{
-      res.status(400).send({msg : err.code})
+      next(err)
     })
 
   }

@@ -30,12 +30,14 @@ app.use((err,req,res,next)=>{
   if(err.code === "22P02"){
     res.status(400).send({msg: "invalid id"})
   }
+  else{
+    next(err)
+  }
 })
 
 app.use((err,req,res,next)=>{
   if(err.code === '23503'){
-    console.log("err")
-    res.status(400).send({msg: "err"})
+    res.status(400).send({msg: err.detail})
   }
   else{
     next(err)
@@ -43,19 +45,11 @@ app.use((err,req,res,next)=>{
 })
 
 app.use((err, req, res, next) => {
-  if (err.code) {
-    res.status(err.status).send({ msg: err.msg });
-  } else {
-    next(err);
-  }
-});
-
-app.use((err, req, res, next) => {
   res.status(500).send({msg : "Server Error!"});
 });
 
 app.all("/*", (req, res) => {
-  res.status(404).send({ msg: err.code });
+  res.status(404).send({ msg: "path not found" });
 });
 
 module.exports = app;

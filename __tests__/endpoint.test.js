@@ -244,7 +244,7 @@ describe("/api/articles/:article_id/comments", () => {
   });
 });
 
-describe.only("/api/articles/:article_id/comments", () => {
+describe("/api/articles/:article_id/comments", () => {
   test("returns added comment for the article", () => {
     const addComment = {
       username: "butter_bridge",
@@ -267,15 +267,45 @@ describe.only("/api/articles/:article_id/comments", () => {
         );
       });
   });
-  test("404 sends an appropriate and error message when given an invalid username", () => {
+  test("POST 404 sends an appropriate and error message when given an invalid username", () => {
     const addComment = {
       username: "Bob101",
-      body: "Very good article",
+      body: "Boring article",
     };
     return request(app)
       .post("/api/articles/4/comments")
       .send(addComment)
       .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(
+          'Key (author)=(Bob101) is not present in table "users".'
+        );
+      });
+  });
+  test("POST: 404 sends an appropriate and error message when given an invalid id", () => {
+    const addComment = {
+      username: "butter_bridge",
+      body: "Very bad article",
+    };
+    return request(app)
+      .post("/api/articles/not-an-id/comments")
+      .send(addComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid id");
+      });
+  });
+  test("POST: 404 sends an appropriate and error message when given a valid but non-existent id", () => {
+    const addComment = {
+      username: "butter_bridge",
+      body: "Very bad article",
+    };
+    return request(app)
+      .post("/api/articles/99/comments")
+      .send(addComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
   });
 });
-//above test, can't get msg to be caught in the controller.
