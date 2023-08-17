@@ -8,6 +8,7 @@ const {
   selectCommentsbyComment_id,
   updateVotes,
   insertComment,
+  selectUsers
 } = require("./model");
 
 exports.getTopics = (req, res, next) => {
@@ -117,3 +118,10 @@ exports.postComment = (req, res, next) => {
       next(err);
     });
 };
+
+exports.getUsers = (req,res,next) =>{
+  selectUsers()
+  .then((response)=>{
+    res.status(200).send({response})
+  })
+}
