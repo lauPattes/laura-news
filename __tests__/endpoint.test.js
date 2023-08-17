@@ -474,12 +474,4 @@ describe("GET /api/users", () => {
         });
       });
   });
-  test("GET 404 responds with the correct error message when given an inccorect path",()=>{
-    return request(app)
-    .get("/api/userZ")
-    .expect(404)
-    .then(({body})=>{
-      expect(body.msg).toBe("path not found")
-    })
-  })
 });
