@@ -11,6 +11,8 @@ const {
   selectUsers,
 } = require("./model");
 
+const { checkExists } = require("./util-models");
+
 exports.getTopics = (req, res, next) => {
   selectTopics()
     .then((topics) => {
@@ -58,16 +60,18 @@ exports.getCommentsByArticleId = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
   const { query } = req;
-    const { topic, sort_by, order } = query;
-    selectArticles(topic, sort_by, order)
-      .then((articles) => {
-        res.status(200).send({ articles });
-      })
-      .catch((err) => {
-        console.log(err)
-        next(err);
-      });
-  }
+  const { topic, sort_by, order } = query;
+  checkExists("articles", "topic", topic)
+    .then(() => {
+      return selectArticles(topic, sort_by, order);
+    })
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 
 exports.patchVotes = (req, res, next) => {
   const { inc_votes } = req.body;

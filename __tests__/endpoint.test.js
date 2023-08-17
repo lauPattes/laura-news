@@ -554,4 +554,12 @@ describe("GET /api/articles (queries)",()=>{
     })
     })
   })
+  test("GET 404. returns appropriate error when topic doesn't exist in the database",()=>{
+    return request (app)
+    .get("/api/articles?topic=asdfasf")
+    .expect(404)
+    .then(({body})=>{
+      expect(body.msg).toEqual("Resource not found")
+    })
+  })
 })
