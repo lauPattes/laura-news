@@ -32,9 +32,6 @@ app.use((err,req,res,next)=>{
   } else{
     next(err)
   }
-  else{
-    next(err)
-  }
 })
 
 app.use((err,req,res,next)=>{
