@@ -111,7 +111,7 @@ describe("/api/articles", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
-      .then(({body}) => {
+      .then(({ body }) => {
         const { articles } = body;
         expect(articles).toHaveLength(13);
         articles.forEach((articleObj) => {
@@ -132,9 +132,6 @@ describe("/api/articles", () => {
   });
 });
 
-
-
-
 describe("/api/articles", () => {
   test("Get 200, the array of objects sent to the client contains the correct comment_count value, and doesn't have a body value", () => {
     return request(app)
@@ -145,14 +142,15 @@ describe("/api/articles", () => {
         const { articles } = body;
         expect(articles[0]).toEqual({
           article_id: 3,
-          title: 'Eight pug gifs that remind me of mitch',
-          topic: 'mitch',
-          author: 'icellusedkars',
+          title: "Eight pug gifs that remind me of mitch",
+          topic: "mitch",
+          author: "icellusedkars",
           created_at: "2020-11-03T09:12:00.000Z",
           votes: 0,
-          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
-          comment_count: 2
-        })
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: 2,
+        });
       });
   });
   test("Get 200, the articles should be sorted by date in descending order", () => {
@@ -162,11 +160,10 @@ describe("/api/articles", () => {
       .then((response) => {
         const { body } = response;
         const { articles } = body;
-        expect(articles).toBeSortedBy("created_at",{descending : true})
+        expect(articles).toBeSortedBy("created_at", { descending: true });
       });
-  })
+  });
 });
-
 
 describe("/api/articles/:article_id/comments", () => {
   test("Get: 200 sends an array of comment objects to the client for the specified id, each of which has the correct properties", () => {
@@ -215,20 +212,20 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(200)
       .then((response) => {
         const { body } = response;
-        const comments = body.comments
-        expect(comments).toBeSortedBy("created_at",{descending : true})
+        const comments = body.comments;
+        expect(comments).toBeSortedBy("created_at", { descending: true });
       });
   });
-  test("Get:200 sends an empty array when there are no comments for the specified id",()=>{
+  test("Get:200 sends an empty array when there are no comments for the specified id", () => {
     return request(app)
       .get("/api/articles/2/comments")
       .expect(200)
       .then((response) => {
         const { body } = response;
-        const comments = body.comments
-        expect(comments).toHaveLength(0)
-      })
-  })
+        const comments = body.comments;
+        expect(comments).toHaveLength(0);
+      });
+  });
   test("GET: 404 sends an appropriate and error message when given a valid but non-existent id", () => {
     return request(app)
       .get("/api/articles/999/comments")
@@ -236,14 +233,29 @@ describe("/api/articles/:article_id/comments", () => {
       .then((response) => {
         expect(response.body.msg).toBe("article does not exist");
       });
-  })
-  test("GET: 404 sends an appropriate and error message when given an invalid id",()=>{
+  });
+  test("GET: 404 sends an appropriate and error message when given an invalid id", () => {
     return request(app)
-    .get("/api/articles/not-an-id/comments")
-    .expect(400)
-    .then((response) => {
-      expect(response.body.msg).toBe("invalid id")
-    })
-  })
-})
+      .get("/api/articles/not-an-id/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("invalid id");
+      });
+  });
+});
 
+describe("/api/comments/:comment_id", () => {
+  test("DELETE 204, deletes the given comment by comment_id, responds with status 204 and no content", () => {
+    return request(app)
+      .delete("/api/comments/2")
+      .expect(204)
+      .then(() => {
+        return db.query(
+          "SELECT * FROM comments WHERE comment_id = 2 ORDER BY created_at DESC;"
+        );
+      })
+      .then((response) => {
+        expect(response.rows).toEqual([]);
+      });
+  });
+});

@@ -3,7 +3,8 @@ const {
   selectEndpoints,
   selectArticleById,
   selectCommentsByArticleId,
-  selectArticles
+  selectArticles,
+  removeComment
 } = require("./model");
 
 exports.getTopics = (req, res) => {
@@ -60,3 +61,11 @@ exports.getArticles = (req,res,next) => {
     next(err)
   })
   }
+
+exports.deleteCommentId = (req,res,next) =>{
+  const {comment_id} = req.params
+  removeComment(comment_id)
+  .then((deletedComment)=>{
+    res.status(204).send()
+  })
+}
