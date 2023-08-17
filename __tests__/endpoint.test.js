@@ -258,4 +258,20 @@ describe("/api/comments/:comment_id", () => {
         expect(response.rows).toEqual([]);
       });
   });
+  test("DELETE 404, returns correct error when given a valid but non existent comment_id",()=>{
+    return request(app)
+      .delete("/api/comments/999")
+      .expect(404)
+      .then(({body})=>{
+        expect(body.msg).toBe("comment does not exist")
+      })
+  })
+  test("DELETE 400, returns correct error when given invalid id",()=>{
+    return request(app)
+      .delete("/api/comments/not-a-comment")
+      .expect(400)
+      .then(({body})=>{
+        expect(body.msg).toBe("invalid id")
+      })
+  })
 });
