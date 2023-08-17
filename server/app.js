@@ -37,7 +37,7 @@ app.use((err,req,res,next)=>{
 
 app.use((err,req,res,next)=>{
   if(err.code === '23503'){
-    res.status(400).send({msg: err.detail})
+    res.status(400).send({msg: "incorrect body"})
   }
   else{
     next(err)

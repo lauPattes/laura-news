@@ -267,7 +267,7 @@ describe("/api/articles/:article_id/comments", () => {
         );
       });
   });
-  test("POST 404 sends an appropriate and error message when given an invalid username", () => {
+  test("POST 400 sends an appropriate and error message when given an invalid username", () => {
     const addComment = {
       username: "Bob101",
       body: "Boring article",
@@ -278,11 +278,11 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe(
-          'Key (author)=(Bob101) is not present in table "users".'
+          'incorrect body'
         );
       });
   });
-  test("POST: 404 sends an appropriate and error message when given an invalid id", () => {
+  test("POST: 400 sends an appropriate and error message when given an invalid id", () => {
     const addComment = {
       username: "butter_bridge",
       body: "Very bad article",

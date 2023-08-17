@@ -69,11 +69,10 @@ exports.getArticles = (req,res,next) => {
       return Promise.all([response])
     })
     .then(()=>{
-     const comment = insertComment(username, body, article_id)
-     return Promise.all([comment])
+     return insertComment(username, body, article_id)
+     
     })
-    .then((commentArr)=>{
-      const comment = commentArr[0]
+    .then((comment)=>{
       res.status(201).send({comment})
     })
     .catch((err)=>{
