@@ -275,3 +275,170 @@ describe("/api/comments/:comment_id", () => {
       })
   })
 });
+describe("/api/articles/:article_id", () => {
+  test("PATCH 200 responds with updated article", () => {
+    const toUpdate = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(toUpdate)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.updatedArticle).toEqual({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 105,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  test("PATCH 201 responds with updated article", () => {
+    const toUpdate = { inc_votes: -50 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(toUpdate)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.updatedArticle).toEqual({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 50,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  test("PATCH 201 responds with updated article", () => {
+    const toUpdate = { inc_votes: -110 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(toUpdate)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.updatedArticle).toEqual({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: -10,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  test("PATCH 400 sends an appropriate and error message when given a malformed body", () => {
+    const toUpdate = { inc_votes: "bannana" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(toUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("incorrect body");
+      });
+  });
+  test("PATCH 400 sends an appropriate and error message when given a body with the wrong type", () => {
+    const toUpdate = {};
+    return request(app)
+      .patch("/api/articles/1")
+      .send(toUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("incorrect body");
+      });
+  });
+  test("PATCH: 404 sends an appropriate and error message when given a valid but non-existent id", () => {
+    const toUpdate = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/999")
+      .send(toUpdate)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("PATCH: 400 sends an appropriate and error message when given an invalid id", () => {
+    const toUpdate = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/not-an-id")
+      .send(toUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid id");
+      });
+  });
+});
+describe("/api/articles/:article_id/comments", () => {
+  test("returns added comment for the article", () => {
+    const addComment = {
+      username: "butter_bridge",
+      body: "Very good article",
+    };
+    return request(app)
+      .post("/api/articles/4/comments")
+      .send(addComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            comment_id: 19,
+            votes: 0,
+            created_at: expect.any(String),
+            author: "butter_bridge",
+            body: expect.any(String),
+            article_id: 4,
+          })
+        );
+      });
+    });
+  });
+  test("POST 400 sends an appropriate and error message when given an invalid username", () => {
+    const addComment = {
+      username: "Bob101",
+      body: "Boring article",
+    };
+    return request(app)
+      .post("/api/articles/4/comments")
+      .send(addComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(
+          'incorrect body'
+        );
+      });
+  });
+  test("POST: 400 sends an appropriate and error message when given an invalid id", () => {
+    const addComment = {
+      username: "butter_bridge",
+      body: "Very bad article",
+    };
+    return request(app)
+      .post("/api/articles/not-an-id/comments")
+      .send(addComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid id");
+      });
+  })
+  test("POST: 404 sends an appropriate and error message when given a valid but non-existent id", () => {
+    const addComment = {
+      username: "butter_bridge",
+      body: "Very bad article",
+    };
+    return request(app)
+      .post("/api/articles/99/comments")
+      .send(addComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });

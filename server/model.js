@@ -76,3 +76,29 @@ exports.selectCommentsbyComment_id = (comment_id) => {
       }
     });
 };
+exports.selectCommentsByArticleId = (article_id)=>{
+    return db.query('SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;',[article_id])
+    .then((result)=>{
+        return result.rows
+    })
+}
+exports.selectArticles = () =>{
+    return db.query('SELECT articles.article_id, articles.title,articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url,COUNT(comments.article_id)::INT AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;')
+    .then((result)=>{
+        return result.rows
+    })
+}
+
+exports.updateVotes = (article_id, inc_votes)=>{
+    return db.query('UPDATE articles SET votes = votes + $2 WHERE article_id = $1 RETURNING *;',[article_id,inc_votes])
+    .then((result)=>{
+        return result.rows[0]
+    })
+}
+exports.insertComment = (username, body, article_id) =>{
+    return db.query('INSERT INTO comments(author,body,article_id) VALUES($1,$2,$3) RETURNING *;',[username,body,article_id])
+    .then((result)=>{
+        return result.rows[0]
+    })
+}
+
