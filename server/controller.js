@@ -8,7 +8,7 @@ const {
   selectCommentsbyComment_id,
   updateVotes,
   insertComment,
-  selectUsers
+  selectUsers,
 } = require("./model");
 
 exports.getTopics = (req, res, next) => {
@@ -57,14 +57,17 @@ exports.getCommentsByArticleId = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  selectArticles()
-    .then((articles) => {
-      res.status(200).send({ articles });
-    })
-    .catch((err) => {
-      next(err);
-    });
-};
+  const { query } = req;
+    const { topic, sort_by, order } = query;
+    selectArticles(topic, sort_by, order)
+      .then((articles) => {
+        res.status(200).send({ articles });
+      })
+      .catch((err) => {
+        console.log(err)
+        next(err);
+      });
+  }
 
 exports.patchVotes = (req, res, next) => {
   const { inc_votes } = req.body;
@@ -84,22 +87,21 @@ exports.patchVotes = (req, res, next) => {
         next(err);
       });
   }
-}
+};
 
-exports.deleteCommentId = (req,res,next) =>{
-  const {comment_id} = req.params
+exports.deleteCommentId = (req, res, next) => {
+  const { comment_id } = req.params;
   selectCommentsbyComment_id(comment_id)
-  .then((comment)=>{
-    return removeComment(comment_id)
-  })
-  .then(()=>{
-    res.status(204).send()
-  })
-  .catch((err)=>{
-    next(err)
-  })
-}
-
+    .then((comment) => {
+      return removeComment(comment_id);
+    })
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 
 exports.postComment = (req, res, next) => {
   const { username, body } = req.body;
@@ -119,9 +121,8 @@ exports.postComment = (req, res, next) => {
     });
 };
 
-exports.getUsers = (req,res,next) =>{
-  selectUsers()
-  .then((response)=>{
-    res.status(200).send({response})
-  })
-}
+exports.getUsers = (req, res, next) => {
+  selectUsers().then((response) => {
+    res.status(200).send({ response });
+  });
+};
