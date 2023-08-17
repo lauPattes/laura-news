@@ -562,4 +562,20 @@ describe("GET /api/articles (queries)",()=>{
       expect(body.msg).toEqual("Resource not found")
     })
   })
+  test("GET 400. returns appropriate error when given invalid query",()=>{
+    return request (app)
+    .get("/api/articles?order=20")
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toEqual("Invalid order query")
+    })
+  })
+  test("GET 400 returns appropriate error when given invalid query",()=>{
+    return request (app)
+    .get("/api/articles?sort_by=asdf")
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toEqual("Invalid sort query")
+    })
+  })
 })
