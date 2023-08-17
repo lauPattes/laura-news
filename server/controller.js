@@ -69,9 +69,7 @@ exports.patchVotes = (req, res, next) => {
   if (type !== "number") {
     next({status: 400, msg: "incorrect body" });
   } else {
-    selectArticleById(article_id).then((articles)=>{
-      return Promise.all([articles])
-    })
+    selectArticleById(article_id)
     .then(()=>{
       return updateVotes(article_id, inc_votes)
     })

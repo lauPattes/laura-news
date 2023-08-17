@@ -245,7 +245,7 @@ describe("/api/articles/:article_id/comments", () => {
 });
 
 describe("/api/articles/:article_id", () => {
-  test("PATCH 201 responds with updated article", () => {
+  test("PATCH 200 responds with updated article", () => {
     const toUpdate = { inc_votes: 5 };
     return request(app)
       .patch("/api/articles/1")
@@ -335,7 +335,7 @@ describe("/api/articles/:article_id", () => {
         expect(body.msg).toBe("article does not exist");
       });
   });
-  test("PATCH: 404 sends an appropriate and error message when given an invalid id", () => {
+  test("PATCH: 400 sends an appropriate and error message when given an invalid id", () => {
     const toUpdate = { inc_votes: 10 };
     return request(app)
       .patch("/api/articles/not-an-id")
