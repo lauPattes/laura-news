@@ -244,6 +244,37 @@ describe("/api/articles/:article_id/comments", () => {
   });
 });
 
+describe("/api/comments/:comment_id", () => {
+  test("DELETE 204, deletes the given comment by comment_id, responds with status 204 and no content", () => {
+    return request(app)
+      .delete("/api/comments/2")
+      .expect(204)
+      .then(() => {
+        return db.query(
+          "SELECT * FROM comments WHERE comment_id = 2 ORDER BY created_at DESC;"
+        );
+      })
+      .then((response) => {
+        expect(response.rows).toEqual([]);
+      });
+  });
+  test("DELETE 404, returns correct error when given a valid but non existent comment_id",()=>{
+    return request(app)
+      .delete("/api/comments/999")
+      .expect(404)
+      .then(({body})=>{
+        expect(body.msg).toBe("comment does not exist")
+      })
+  })
+  test("DELETE 400, returns correct error when given invalid id",()=>{
+    return request(app)
+      .delete("/api/comments/not-a-comment")
+      .expect(400)
+      .then(({body})=>{
+        expect(body.msg).toBe("invalid id")
+      })
+  })
+});
 describe("/api/articles/:article_id", () => {
   test("PATCH 200 responds with updated article", () => {
     const toUpdate = { inc_votes: 5 };

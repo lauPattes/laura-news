@@ -4,6 +4,8 @@ const {
   selectArticleById,
   selectCommentsByArticleId,
   selectArticles,
+  removeComment,
+  selectCommentsbyComment_id,
   updateVotes,
   insertComment,
 } = require("./model");
@@ -81,7 +83,22 @@ exports.patchVotes = (req, res, next) => {
         next(err);
       });
   }
-};
+}
+
+exports.deleteCommentId = (req,res,next) =>{
+  const {comment_id} = req.params
+  selectCommentsbyComment_id(comment_id)
+  .then((comment)=>{
+    return removeComment(comment_id)
+  })
+  .then(()=>{
+    res.status(204).send()
+  })
+  .catch((err)=>{
+    next(err)
+  })
+}
+
 
 exports.postComment = (req, res, next) => {
   const { username, body } = req.body;
