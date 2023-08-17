@@ -258,22 +258,22 @@ describe("/api/comments/:comment_id", () => {
         expect(response.rows).toEqual([]);
       });
   });
-  test("DELETE 404, returns correct error when given a valid but non existent comment_id",()=>{
+  test("DELETE 404, returns correct error when given a valid but non existent comment_id", () => {
     return request(app)
       .delete("/api/comments/999")
       .expect(404)
-      .then(({body})=>{
-        expect(body.msg).toBe("comment does not exist")
-      })
-  })
-  test("DELETE 400, returns correct error when given invalid id",()=>{
+      .then(({ body }) => {
+        expect(body.msg).toBe("comment does not exist");
+      });
+  });
+  test("DELETE 400, returns correct error when given invalid id", () => {
     return request(app)
       .delete("/api/comments/not-a-comment")
       .expect(400)
-      .then(({body})=>{
-        expect(body.msg).toBe("invalid id")
-      })
-  })
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid id");
+      });
+  });
 });
 describe("/api/articles/:article_id", () => {
   test("PATCH 200 responds with updated article", () => {
@@ -399,46 +399,87 @@ describe("/api/articles/:article_id/comments", () => {
           })
         );
       });
+  });
+});
+test("POST 400 sends an appropriate and error message when given an invalid username", () => {
+  const addComment = {
+    username: "Bob101",
+    body: "Boring article",
+  };
+  return request(app)
+    .post("/api/articles/4/comments")
+    .send(addComment)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe("incorrect body");
     });
-  });
-  test("POST 400 sends an appropriate and error message when given an invalid username", () => {
-    const addComment = {
-      username: "Bob101",
-      body: "Boring article",
-    };
+});
+test("POST: 400 sends an appropriate and error message when given an invalid id", () => {
+  const addComment = {
+    username: "butter_bridge",
+    body: "Very bad article",
+  };
+  return request(app)
+    .post("/api/articles/not-an-id/comments")
+    .send(addComment)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe("invalid id");
+    });
+});
+test("POST: 404 sends an appropriate and error message when given a valid but non-existent id", () => {
+  const addComment = {
+    username: "butter_bridge",
+    body: "Very bad article",
+  };
+  return request(app)
+    .post("/api/articles/99/comments")
+    .send(addComment)
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("article does not exist");
+    });
+});
+
+describe("GET /api/users", () => {
+  test("GET 200 responds with the correct array of objects", () => {
     return request(app)
-      .post("/api/articles/4/comments")
-      .send(addComment)
-      .expect(400)
+      .get("/api/users")
+      .expect(200)
       .then(({ body }) => {
-        expect(body.msg).toBe(
-          'incorrect body'
-        );
+        const { response } = body;
+        expect(response).toHaveLength(4);
+        response.forEach((obj) => {
+          expect(obj).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
       });
   });
-  test("POST: 400 sends an appropriate and error message when given an invalid id", () => {
-    const addComment = {
-      username: "butter_bridge",
-      body: "Very bad article",
-    };
+  test("GET 200 responds with the correct array of objects", () => {
     return request(app)
-      .post("/api/articles/not-an-id/comments")
-      .send(addComment)
-      .expect(400)
+      .get("/api/users")
+      .expect(200)
       .then(({ body }) => {
-        expect(body.msg).toBe("invalid id");
+        const { response } = body;
+        expect(response[0]).toEqual({
+          username: "butter_bridge",
+          name: "jonny",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        });
       });
+  });
+  test("GET 404 responds with the correct error message when given an inccorect path",()=>{
+    return request(app)
+    .get("/api/userZ")
+    .expect(404)
+    .then(({body})=>{
+      expect(body.msg).toBe("path not found")
+    })
   })
-  test("POST: 404 sends an appropriate and error message when given a valid but non-existent id", () => {
-    const addComment = {
-      username: "butter_bridge",
-      body: "Very bad article",
-    };
-    return request(app)
-      .post("/api/articles/99/comments")
-      .send(addComment)
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("article does not exist");
-      });
-  });
+});
