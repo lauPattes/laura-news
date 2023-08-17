@@ -45,10 +45,16 @@ exports.selectArticles = () =>{
     })
 }
 
+exports.updateVotes = (article_id, inc_votes)=>{
+    return db.query('UPDATE articles SET votes = votes + $2 WHERE article_id = $1 RETURNING *;',[article_id,inc_votes])
+    .then((result)=>{
+        return result.rows[0]
+    })
+}
 exports.insertComment = (username, body, article_id) =>{
     return db.query('INSERT INTO comments(author,body,article_id) VALUES($1,$2,$3) RETURNING *;',[username,body,article_id])
     .then((result)=>{
         return result.rows[0]
     })
-
 }
+
