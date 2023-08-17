@@ -346,3 +346,68 @@ describe("/api/articles/:article_id", () => {
       });
   });
 });
+describe("/api/articles/:article_id/comments", () => {
+  test("returns added comment for the article", () => {
+    const addComment = {
+      username: "butter_bridge",
+      body: "Very good article",
+    };
+    return request(app)
+      .post("/api/articles/4/comments")
+      .send(addComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            comment_id: 19,
+            votes: 0,
+            created_at: expect.any(String),
+            author: "butter_bridge",
+            body: expect.any(String),
+            article_id: 4,
+          })
+        );
+      });
+    });
+  });
+  test("POST 400 sends an appropriate and error message when given an invalid username", () => {
+    const addComment = {
+      username: "Bob101",
+      body: "Boring article",
+    };
+    return request(app)
+      .post("/api/articles/4/comments")
+      .send(addComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(
+          'incorrect body'
+        );
+      });
+  });
+  test("POST: 400 sends an appropriate and error message when given an invalid id", () => {
+    const addComment = {
+      username: "butter_bridge",
+      body: "Very bad article",
+    };
+    return request(app)
+      .post("/api/articles/not-an-id/comments")
+      .send(addComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid id");
+      });
+  })
+  test("POST: 404 sends an appropriate and error message when given a valid but non-existent id", () => {
+    const addComment = {
+      username: "butter_bridge",
+      body: "Very bad article",
+    };
+    return request(app)
+      .post("/api/articles/99/comments")
+      .send(addComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
