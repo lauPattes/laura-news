@@ -8,9 +8,9 @@ To try it for yourself clone the repo.
 
 Run "npm install" in the terminal
 
-You then need to install the following as devDependencies:"husk", "jest","jest-extended","jest sorted", "supertest"
+Install the following as devDependencies:"husk", "jest","jest-extended","jest sorted", "supertest"
 
-You also need to install the following as dependencies: "dotenv","express","pg","pg-format"
+Install the following as dependencies: "dotenv","express","pg","pg-format"
 
 You will need to create two .env files '.env.test' and '.env.development'. 
 In the .env.test file write PGDATABASE=nc_news_test
@@ -28,6 +28,8 @@ To listen on port 9090 run "start". To assin the value of DATABASE_URL to  NODE_
     "start": "node listen.js",
     "seed-prod": "NODE_ENV=production npm run seed"
   },
+
+Node.js(^v20.3.1) and pg(^v8.11.2) are the minimmum versions of node and pg needed to run this project.
 
 
 For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
