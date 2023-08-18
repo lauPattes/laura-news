@@ -52,6 +52,7 @@ exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
       "author",
       "body",
       "article_img_url",
+      "votes",
       "created_at",
     ].includes(sort_by)
   ) {
