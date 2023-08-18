@@ -2,30 +2,23 @@
 
 Link to hosted version: https://laura-news.onrender.com
 
-Summary of project: A news sit where the user can access different articles, comments. 
+Summary of project: A news site with a range of different endpoints. Via the endpoints the user can view articles, topics, users and comments. The user can post comments on articles and like/dislike articles. They can also query the /api/articles endpoint to filter the articles (e.g. by topic, author, title, votes etc), and sort the articles according to any valid column (e.g. date, comment_count ect)
 
-You need to install the following devDependencies
+To try it for yourself clone the repo. 
 
-"devDependencies": {
-    "husky": "^8.0.2",
-    "jest": "^27.5.1",
-    "jest-extended": "^2.0.0",
-    "jest-sorted": "^1.0.14",
-    "supertest": "^6.3.3"
-}
+Run "npm install" in the terminal
 
-You also need to install the following dependencies: 
+You then need to install the following devDependencies:"husk", "jest","jest-extended","jest sorted", "supertest"
 
-"dependencies": {
-    "dotenv": "^16.0.0",
-    "express": "^4.18.2",
-    "pg": "^8.11.2",
-    "pg-format": "^1.0.4"
-  }
+You also need to install the following dependencies: "dotenv","express","pg","pg-format"
 
-To setup the database run the script "setup-dbs". To seed the database run the script "seed". To test your code run "test". 
+You will need to create two .env files .env.test and .env.development. 
+Into .env.test, write PGDATABASE=nc_news_test
+Into .env.development write PGDATABASE=nc_news
+
+
+To setup the database run the npm script "setup-dbs". To seed the database run "seed". To test your code run "test". 
 To listen on port 9090 run "start". To assin the value of DATABASE_URL to  NODE_ENV, and then seed the data run "seed-prod" 
-
 
 "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
@@ -35,10 +28,6 @@ To listen on port 9090 run "start". To assin the value of DATABASE_URL to  NODE_
     "start": "node listen.js",
     "seed-prod": "NODE_ENV=production npm run seed"
   },
-
-You will need to create two .env files .env.test and .env.development. 
-Into .env.test, write PGDATABASE=nc_news_test
-Into .env.development write PGDATABASE=nc_news
 
 
 For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
