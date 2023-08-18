@@ -61,7 +61,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
   const { query } = req;
   const { topic, sort_by, order } = query;
-  checkExists("articles", "topic", topic)
+  checkExists("topics", "slug", topic)
     .then(() => {
       return selectArticles(topic, sort_by, order);
     })
