@@ -577,7 +577,7 @@ describe("GET /api/articles (queries)", () => {
 });
 
 describe("/api/articles/:article_id (comment_count)", () => {
-  test("GET 200 returns correct the correct object for the specified article_id with a comment count", () => {
+  test("GET 200 returns the correct object for the specified article_id with a comment count", () => {
     return request(app)
       .get("/api/articles/3")
       .expect(200)
@@ -586,15 +586,35 @@ describe("/api/articles/:article_id (comment_count)", () => {
         expect(article).toEqual(
           expect.objectContaining({
             article_id: 3,
-            title: "Eight pug gifs that remind me of mitch",
-            topic: "mitch",
-            author: "icellusedkars",
-            body: "some gifs",
-            created_at: "2020-11-03T09:12:00.000Z",
-            votes: 0,
-            article_img_url:
-              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
             comment_count : 2
+          })
+        );
+      });
+  });
+  test("GET 200 returns the correct object for the specified article_id with a comment count", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then(({body}) => {
+        const {article} = body;
+        expect(article).toEqual(
+          expect.objectContaining({
+            article_id: 2,
+            comment_count : 0
+          })
+        );
+      });
+  });
+  test("GET 200 returns the correct object for the specified article_id with a comment count", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({body}) => {
+        const {article} = body;
+        expect(article).toEqual(
+          expect.objectContaining({
+            article_id: 1,
+            comment_count : 11
           })
         );
       });
