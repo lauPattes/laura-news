@@ -8,17 +8,17 @@ To try it for yourself clone the repo.
 
 Run "npm install" in the terminal
 
-You then need to install the following devDependencies:"husk", "jest","jest-extended","jest sorted", "supertest"
+You then need to install the following as devDependencies:"husk", "jest","jest-extended","jest sorted", "supertest"
 
-You also need to install the following dependencies: "dotenv","express","pg","pg-format"
+You also need to install the following as dependencies: "dotenv","express","pg","pg-format"
 
-You will need to create two .env files .env.test and .env.development. 
-Into .env.test, write PGDATABASE=nc_news_test
-Into .env.development write PGDATABASE=nc_news
+You will need to create two .env files '.env.test' and '.env.development'. 
+In the .env.test file write PGDATABASE=nc_news_test
+In .env.development file write PGDATABASE=nc_news
 
 
-To setup the database run the npm script "setup-dbs". To seed the database run "seed". To test your code run "test". 
-To listen on port 9090 run "start". To assin the value of DATABASE_URL to  NODE_ENV, and then seed the data run "seed-prod" 
+To setup the databases run the npm script "setup-dbs". Similarly to seed the database with the dev Data run "seed". To test your code using the test data run "test". 
+To listen on port 9090 run "start". To assin the value of DATABASE_URL to  NODE_ENV, and then seed the data with the DevData, run "seed-prod".
 
 "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
