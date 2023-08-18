@@ -23,6 +23,18 @@ You also need to install the following dependencies:
     "pg-format": "^1.0.4"
   }
 
+To setup the database run the script "setup-dbs". To seed the database run the script "seed". To test your code run "test". 
+To listen on port 9090 run "start". To assin the value of DATABASE_URL to  NODE_ENV, and then seed the data run "seed-prod" 
+
+
+"scripts": {
+    "setup-dbs": "psql -f ./db/setup.sql",
+    "seed": "node ./db/seeds/run-seed.js",
+    "test": "jest",
+    "prepare": "husky install",
+    "start": "node listen.js",
+    "seed-prod": "NODE_ENV=production npm run seed"
+  },
 
 You will need to create two .env files .env.test and .env.development. 
 Into .env.test, write PGDATABASE=nc_news_test
