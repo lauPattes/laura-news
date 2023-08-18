@@ -16,8 +16,10 @@ exports.selectEndpoints = () => {
 };
 
 exports.selectArticleById = (article_id) => {
+  const queryStr = 'SELECT articles.article_id, articles.title,articles.topic, articles.author, articles.body, articles.created_at, articles.votes, articles.article_img_url,COUNT(comments.article_id)::INT AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id'
+  
   return db
-    .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
+    .query(queryStr, [article_id])
     .then((result) => {
       const article = result.rows[0];
       if (!article) {
