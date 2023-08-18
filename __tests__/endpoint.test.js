@@ -475,3 +475,103 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe("GET /api/articles (queries)", () => {
+  test("topic query, filters articles by specificed topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(1);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("cats");
+        });
+      });
+  });
+  test("sort_by and order query, sorts by an valid column and order can be set to asc or desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("title", { descending: false });
+      });
+  });
+  test("sort_by and order query. order defaults to desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("author", { descending: true });
+      });
+  });
+  test("sort_by and order query. sort_by defaults to created_at", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("created_at", { descending: false });
+        expect(articles[2]).toEqual(
+          expect.objectContaining({
+            article_id: 8,
+            title: "Does Mitch predate civilisation?",
+            topic: "mitch",
+            author: "icellusedkars",
+            created_at: "2020-04-17T01:08:00.000Z",
+            votes: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            comment_count: 0,
+          })
+        );
+      });
+  });
+  test("multipled queries, correct array returned for multiple queries", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=author&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("author", { descending: false });
+        expect(articles).toHaveLength(12);
+        articles.forEach((article) => {
+          expect(article.topic).toEqual("mitch");
+        });
+      });
+  });
+  test("GET 404. returns appropriate error when topic doesn't exist in the database", () => {
+    return request(app)
+      .get("/api/articles?topic=asdfasf")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Resource not found");
+      });
+  });
+  test("GET 400. returns appropriate error when given invalid query", () => {
+    return request(app)
+      .get("/api/articles?order=20")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid order query");
+      });
+  });
+  test("GET 400 returns appropriate error when given invalid query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=asdf")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid sort query");
+      });
+  });
+  test("GET 200 returns an empty array when given a topic that exists in the database, but where there are no associated articles",()=>{
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      })
+  })
+});

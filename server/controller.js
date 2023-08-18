@@ -8,8 +8,10 @@ const {
   selectCommentsbyComment_id,
   updateVotes,
   insertComment,
-  selectUsers
+  selectUsers,
 } = require("./model");
+
+const { checkExists } = require("./util-models");
 
 exports.getTopics = (req, res, next) => {
   selectTopics()
@@ -57,7 +59,12 @@ exports.getCommentsByArticleId = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  selectArticles()
+  const { query } = req;
+  const { topic, sort_by, order } = query;
+  checkExists("topics", "slug", topic)
+    .then(() => {
+      return selectArticles(topic, sort_by, order);
+    })
     .then((articles) => {
       res.status(200).send({ articles });
     })
@@ -84,22 +91,21 @@ exports.patchVotes = (req, res, next) => {
         next(err);
       });
   }
-}
+};
 
-exports.deleteCommentId = (req,res,next) =>{
-  const {comment_id} = req.params
+exports.deleteCommentId = (req, res, next) => {
+  const { comment_id } = req.params;
   selectCommentsbyComment_id(comment_id)
-  .then((comment)=>{
-    return removeComment(comment_id)
-  })
-  .then(()=>{
-    res.status(204).send()
-  })
-  .catch((err)=>{
-    next(err)
-  })
-}
-
+    .then((comment) => {
+      return removeComment(comment_id);
+    })
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 
 exports.postComment = (req, res, next) => {
   const { username, body } = req.body;
@@ -119,9 +125,8 @@ exports.postComment = (req, res, next) => {
     });
 };
 
-exports.getUsers = (req,res,next) =>{
-  selectUsers()
-  .then((response)=>{
-    res.status(200).send({response})
-  })
-}
+exports.getUsers = (req, res, next) => {
+  selectUsers().then((response) => {
+    res.status(200).send({ response });
+  });
+};
