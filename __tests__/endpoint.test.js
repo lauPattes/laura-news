@@ -507,6 +507,15 @@ describe("GET /api/articles (queries)", () => {
         expect(articles).toBeSortedBy("votes", { descending: true });
       });
   });
+  test("sort_by and order query, sorts by an valid column and order can be set to asc or desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("comment_count", { descending: true });
+      });
+  });
   test("sort_by and order query. order defaults to desc", () => {
     return request(app)
       .get("/api/articles?sort_by=author")
