@@ -52,6 +52,7 @@ exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
       "author",
       "body",
       "article_img_url",
+      "comment_count",
       "votes",
       "created_at",
     ].includes(sort_by)
@@ -73,7 +74,7 @@ exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
   }
 
 
-  queryStr += ` GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order.toUpperCase()};`;
+  queryStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toUpperCase()};`;
 
   return db.query(queryStr,queryValues).then((result) => {
     return result.rows;
