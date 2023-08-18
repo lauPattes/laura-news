@@ -566,12 +566,37 @@ describe("GET /api/articles (queries)", () => {
         expect(body.msg).toEqual("Invalid sort query");
       });
   });
-  test("GET 200 returns an empty array when given a topic that exists in the database, but where there are no associated articles",()=>{
+  test("GET 200 returns an empty array when given a topic that exists in the database, but where there are no associated articles", () => {
     return request(app)
       .get("/api/articles?topic=paper")
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toEqual([]);
-      })
-  })
+      });
+  });
+});
+
+describe("/api/articles/:article_id (comment_count)", () => {
+  test("GET 200 returns correct the correct object for the specified article_id with a comment count", () => {
+    return request(app)
+      .get("/api/articles/3")
+      .expect(200)
+      .then(({body}) => {
+        const {article} = body;
+        expect(article).toEqual(
+          expect.objectContaining({
+            article_id: 3,
+            title: "Eight pug gifs that remind me of mitch",
+            topic: "mitch",
+            author: "icellusedkars",
+            body: "some gifs",
+            created_at: "2020-11-03T09:12:00.000Z",
+            votes: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            comment_count : 2
+          })
+        );
+      });
+  });
 });
